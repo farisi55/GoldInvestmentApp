@@ -17,8 +17,7 @@ import { GoldRateContext } from "../context/GoldRateContext"; // Import context
 const db = SQLite.openDatabase({ name: "GoldInvestment.db", location: "default" });
 
 export default function HomeScreen() {
-  const [goldWeight, setGoldWeight] = useState("");
-  const [investmentValue, setInvestmentValue] = useState("");
+  const [totalWeight, setTotalWeight] = useState(0);
   //const [currentGoldRate, setCurrentGoldRate] = useState(0); // Awalnya 0 untuk get dari API
   const { currentGoldRate, setCurrentGoldRate } = useContext(GoldRateContext); // Gunakan context
   const navigation = useNavigation();
@@ -46,95 +45,65 @@ export default function HomeScreen() {
   //      console.log("Current Gold Rate from Context:", currentGoldRate);
   //    }, [currentGoldRate]);
 
-  const handleGoldWeightChange = (weight) => {
-    setGoldWeight(weight);
-    if (!isNaN(weight) && weight !== "") {
-      const value = parseFloat(weight) * currentGoldRate;
-      setInvestmentValue(value.toLocaleString("id-ID")); // Format Rp
-    } else {
-      setInvestmentValue("");
-    }
-  };
-
-  const handleInvestmentValueChange = (value) => {
-    // Hapus semua karakter non-numeric sebelum diolah
-    const numericValue = value.replace(/\D/g, "");
-
-    // Format angka dengan separator ribuan
-    const formattedValue = new Intl.NumberFormat("id-ID").format(numericValue);
-
-    setInvestmentValue(formattedValue);
-
-    if (numericValue) {
-      // Konversi ke berat emas
-      const weight = parseFloat(numericValue) / currentGoldRate;
-      setGoldWeight(weight.toFixed(3)); // Format 0,xxx gram
-    } else {
-      setGoldWeight("");
-    }
-  };
-
-  const saveInvestment = () => {
-    if (!goldWeight || !investmentValue) {
-      Alert.alert("Error", "Mohon isi semua data!");
-      return;
-    }
-
-    const weight = parseFloat(goldWeight);
-    const value = parseFloat(investmentValue.replace(/\D/g, ""));
-    const currentValue = weight * currentGoldRate;
-
-    console.log('nilai value', value);
-    console.log('nilai currentValue', currentValue);
-
-    // DROP TABLE
-    //    db.transaction(tx => {
-    //      tx.executeSql(
-    //        'DROP TABLE IF EXISTS Investments',
-    //        [],
-    //        () => console.log('Old Investments table dropped'),
-    //        error => console.error('Error dropping old Investments table:', error)
-    //      );
-    //    });
 
 
+     //DROP TABLE
+//        db.transaction(tx => {
+//          tx.executeSql(
+//            'DROP TABLE IF EXISTS gold_investments',
+//            [],
+//            () => console.log('Old Investments table dropped'),
+//            error => console.error('Error dropping old Investments table:', error)
+//          );
+//        });
+
+    // CREATE TABLE
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS investments (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, weight REAL, investment REAL, currentValue REAL)",
-        [],
-        () => {
-          tx.executeSql(
-            "INSERT INTO investments (weight, investment, currentValue) VALUES (?, ?, ?)",
-            [weight, value, currentValue],
-            () => Alert.alert("Sukses", "Data berhasil disimpan!"),
-            (error) => Alert.alert("Error", "Gagal menyimpan data: " + error.message)
-          );
-        },
-        (error) => Alert.alert("Error", "Gagal membuat tabel: " + error.message)
+            `CREATE TABLE IF NOT EXISTS gold_investments (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              input_date DATETIME NOT NULL,
+              sys_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              sys_update_date DATETIME NULL,
+              weight_gram FLOAT NOT NULL,
+              price_gold FLOAT NOT NULL,
+              investment_value FLOAT NOT NULL,
+              use_data VARCHAR(5) DEFAULT 'Y'
+         )`,
+         [],
+         () => {}, //=> console.log("Tabel 'gold_investments' berhasil dibuat"),
+         (error) => Alert.alert("Error", "Gagal membuat tabel: " + error.message)
       );
     });
-  };
+
+   // QUERY total Invest
+   db.transaction((tx) => {
+     tx.executeSql(
+       `SELECT SUM(weight_gram) AS totalWeight FROM gold_investments WHERE use_data = 'Y';`,
+       [],
+       (_, { rows }) => {
+         if (rows.length > 0) {
+           const total = rows.item(0).totalWeight || 0;
+           setTotalWeight(total);
+         } else {
+           setTotalWeight(0);
+         }
+       },
+       (error) => {
+         console.error("Gagal mendapatkan total investasi:", error.message);
+       }
+     );
+   });
 
   return (
     <View style={styles.container}>
       <Text style={styles.goldRate}>
         Harga Emas Hari Ini: Rp {currentGoldRate.toLocaleString("id-ID")}/gram
       </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Berat Emas (gram)"
-        keyboardType="numeric"
-        value={goldWeight}
-        onChangeText={handleGoldWeightChange}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Nilai Investasi (Rp)"
-        keyboardType="numeric"
-        value={investmentValue}
-        onChangeText={handleInvestmentValueChange}
-      />
-      <Button title="Catat Investasi" onPress={saveInvestment} />
+      <Text style={styles.header}>Dashboard Investasi</Text>
+            <Text style={styles.summary}>Total Berat: {totalWeight.toFixed(2)} gram</Text>
+            <Text style={styles.summary}>
+              Nilai Investasi: Rp {(totalWeight * currentGoldRate).toLocaleString('id-ID')} </Text>
       <View style={styles.spacing} />
       <TouchableOpacity
         style={styles.button}
@@ -146,7 +115,7 @@ export default function HomeScreen() {
         style={styles.button}
         onPress={() => navigation.navigate("AddInvestment")}
       >
-        <Text style={styles.buttonText}>Add Investment</Text>
+      <Text style={styles.buttonText}>Add Investment</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
@@ -215,5 +184,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 24,
     color: "#888",
+  },
+  header: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+  summary: {
+      fontSize: 16,
+      marginBottom: 10,
   },
 });
