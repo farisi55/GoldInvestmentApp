@@ -17,10 +17,10 @@ const AddInvestmentScreen = ({ navigation }) => {
   const handleDateChange = (event, selectedDate) => {
     setShowPicker(false); // Tutup DateTimePicker setelah pemilihan
     if (selectedDate) {
-      //setInputDate(selectedDate); // Set tanggal yang dipilih
-      // Atur tanggal ke zona waktu lokal
-        const localDate = new Date(selectedDate.getTime() + selectedDate.getTimezoneOffset() * 60000);
-        setInputDate(localDate); // Set tanggal yang disesuaikan dengan zona waktu lokal
+      // Ambil waktu dalam UTC dan tambahkan offset lokal
+      const utcDate = new Date(selectedDate);
+      const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+      setInputDate(localDate); // Set tanggal yang sesuai dengan zona waktu lokal
     }
   };
 
@@ -61,21 +61,16 @@ const AddInvestmentScreen = ({ navigation }) => {
      };
 
     const weightGram = parseFloat(goldWeight);
-    const value = parseFloat(investmentValue.replace(/\D/g, ""));
-    //const formattedDate = inputDate.toISOString().split("T")[0]; // Format YYYY-MM-DD
+    const investmentValueFormat = parseFloat(investmentValue.replace(/\D/g, ""));
 
     // Gunakan formatDateToLocal untuk menampilkan tanggal
     const formattedDate = formatDateToLocal(inputDate);
-
-
-  //    console.log('nilai value', value);
-  //    console.log('nilai currentValue', currentValue);
 
     db.transaction(tx => {
       tx.executeSql(
         `INSERT INTO gold_investments (input_date, weight_gram, price_gold, investment_value)
          VALUES (?, ?, ?, ?)`,
-        [formattedDate, weightGram, currentGoldRate, value],
+        [formattedDate, weightGram, currentGoldRate, investmentValueFormat],
         (_, result) => {
           Alert.alert('Sukses', 'Investasi berhasil ditambahkan!');
           navigation.navigate('Home'); // Kembali ke layar Home
