@@ -20,22 +20,30 @@ const GraphScreen = () => {
       tx.executeSql(
         `SELECT input_date, SUM(weight_gram) AS total_weight, SUM(investment_value) AS total_value
          FROM gold_investments
-         WHERE use_data = "Y"
-         GROUP BY input_date limit 25;`,
+         WHERE use_data = "Y" AND input_date >= date('now', '-30 days')
+         GROUP BY input_date
+         ORDER BY input_date ASC;`,
         [],
         (tx, results) => {
           const rows = results.rows;
-          const data = [];
+          let data = [];
+          let cumulativeWeight = 0;
+          let cumulativeInvestment = 0;
+
           for (let i = 0; i < rows.length; i++) {
             const item = rows.item(i);
+            cumulativeWeight += item.total_weight;
+            cumulativeInvestment += item.total_value;
+
             const formattedDate = new Date(item.input_date).toLocaleDateString('id-ID', {
               day: '2-digit',
               month: 'short',
             });
+
             data.push({
               label: formattedDate,
-              weight: item.total_weight,
-              investment: item.total_value,
+              weight: cumulativeWeight,
+              investment: cumulativeInvestment,
             });
           }
           setChartData(data);
@@ -55,6 +63,9 @@ const GraphScreen = () => {
       y: point.weight,
       value: point.investment,
     });
+
+    // Sembunyikan tooltip setelah 2 detik
+    setTimeout(() => setTooltip({ visible: false, x: 0, y: 0, value: null }), 2000);
   };
 
   const screenWidth = Dimensions.get('window').width;
@@ -93,7 +104,7 @@ const GraphScreen = () => {
             onDataPointClick={({ index }) => handleDataPointClick(index)}
           />
           {tooltip.visible && (
-            <View style={styles.tooltip}>
+            <View style={[styles.tooltip, { top: 50 + tooltip.x * 10, left: 20 + tooltip.x * 10 }]}>
               <Text style={styles.tooltipText}>
                 Nilai Investasi: Rp {tooltip.value.toLocaleString('id-ID')}
               </Text>
@@ -126,8 +137,6 @@ const styles = StyleSheet.create({
   },
   tooltip: {
     position: 'absolute',
-    top: 20,
-    left: 20,
     backgroundColor: 'rgba(0,0,0,0.7)',
     padding: 10,
     borderRadius: 5,
