@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Dimensions, StyleSheet, Button } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { LineChart } from 'react-native-chart-kit';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -9,18 +10,19 @@ const db = SQLite.openDatabase({ name: 'GoldInvestment.db', location: 'default' 
 const GraphScreen = () => {
   const [chartData, setChartData] = useState([]);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: null });
+  const [selectedPeriod, setSelectedPeriod] = useState('30'); // Default 1 bulan
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(selectedPeriod);
+  }, [selectedPeriod]);
 
-  const fetchData = () => {
+  const fetchData = (days) => {
     db.transaction((tx) => {
       tx.executeSql(
         `SELECT input_date, SUM(weight_gram) AS total_weight, SUM(investment_value) AS total_value
          FROM gold_investments
-         WHERE use_data = "Y" AND input_date >= date('now', '-30 days')
+         WHERE use_data = "Y" AND input_date >= date('now', '-${days} days')
          GROUP BY input_date
          ORDER BY input_date ASC;`,
         [],
@@ -73,6 +75,17 @@ const GraphScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Grafik Pertumbuhan Investasi</Text>
+      {/* Dropdown Menu */}
+      <Picker
+        selectedValue={selectedPeriod}
+        onValueChange={(itemValue) => setSelectedPeriod(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="1 Bulan" value="30" />
+        <Picker.Item label="3 Bulan" value="90" />
+        <Picker.Item label="6 Bulan" value="180" />
+        <Picker.Item label="1 Tahun" value="365" />
+      </Picker>
       {chartData.length > 0 ? (
         <View>
           <LineChart
@@ -130,6 +143,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
+  },
+  picker: {
+    height: 50,
+    marginBottom: 16,
   },
   chart: {
     marginVertical: 10,

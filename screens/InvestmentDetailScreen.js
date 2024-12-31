@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Button } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Pastikan react-native-vector-icons terinstal
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const db = SQLite.openDatabase({ name: 'GoldInvestment.db', location: 'default' });
 
+const ITEMS_PER_PAGE = 10; // Jumlah item per halaman
+
 const InvestmentDetailScreen = ({ navigation }) => {
   const [investmentHistory, setInvestmentHistory] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Halaman saat ini
   const [orderByDate, setOrderByDate] = useState('DESC'); // Default sorting by newest
 
   useEffect(() => {
@@ -27,6 +30,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
             rows.push(result.rows.item(i));
           }
           setInvestmentHistory(rows);
+          setCurrentPage(1); // Reset ke halaman pertama saat data di-refresh
         },
         (error) => {
           console.error("Query Error:", error.message);
@@ -44,11 +48,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
       "Konfirmasi Hapus",
       "Apakah Anda yakin ingin menghapus data ini?",
       [
-        {
-          text: "No",
-          onPress: () => console.log("Hapus dibatalkan"),
-          style: "cancel",
-        },
+        { text: "No", style: "cancel" },
         {
           text: "Yes",
           onPress: () => {
@@ -57,9 +57,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
                 `UPDATE gold_investments SET use_data = 'N' WHERE id = ?;`,
                 [id],
                 () => {
-                  console.log(`Data dengan ID ${id} berhasil dihapus.`);
-                  fetchInvestmentDetails(); // Refresh daftar
-                  navigation.navigate('Home'); // Kembali ke layar Home
+                  fetchInvestmentDetails();
                 },
                 (error) => {
                   console.error("Gagal menghapus data:", error.message);
@@ -72,6 +70,13 @@ const InvestmentDetailScreen = ({ navigation }) => {
       { cancelable: false }
     );
   };
+
+  // Hitung data yang ditampilkan berdasarkan halaman
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentData = investmentHistory.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(investmentHistory.length / ITEMS_PER_PAGE);
 
   const renderFooter = () => {
     const totalWeight = investmentHistory.reduce((sum, item) => sum + (item.weight_gram || 0), 0);
@@ -96,7 +101,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
         <Text style={[styles.headerText, { flex: 1 }]}>Aksi</Text>
       </TouchableOpacity>
       <FlatList
-        data={investmentHistory}
+        data={currentData}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => {
           const formattedDate = new Date(item.input_date).toLocaleDateString("en-GB", {
@@ -106,7 +111,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
           });
           return (
             <View style={styles.item}>
-              <Text style={[styles.column, { flex: 1 }]}>{index + 1}</Text>
+              <Text style={[styles.column, { flex: 1 }]}>{startIndex + index + 1}</Text>
               <Text style={[styles.column, { flex: 2 }]}>{formattedDate}</Text>
               <Text style={[styles.column, { flex: 3 }]}>{item.weight_gram.toFixed(2)}</Text>
               <Text style={[styles.column, { flex: 3 }]}>Rp {item.investment_value.toLocaleString("id-ID")}</Text>
@@ -118,50 +123,36 @@ const InvestmentDetailScreen = ({ navigation }) => {
         }}
         ListFooterComponent={renderFooter}
       />
+      {/* Navigasi Halaman */}
+      <View style={styles.pagination}>
+        <Button
+          title="Previous"
+          disabled={currentPage === 1}
+          onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        />
+        <Text style={styles.pageInfo}>
+          Page {currentPage} of {totalPages}
+        </Text>
+        <Button
+          title="Next"
+          disabled={currentPage === totalPages}
+          onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#f0f0f0',
-  },
-  headerText: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  column: {
-    textAlign: 'center',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#f0f0f0',
-  },
-  footerText: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
+  container: { flex: 1, padding: 10, backgroundColor: '#fff' },
+  header: { flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderColor: '#ccc', backgroundColor: '#f0f0f0' },
+  headerText: { fontWeight: 'bold', textAlign: 'center' },
+  item: { flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderColor: '#ccc' },
+  column: { textAlign: 'center' },
+  footer: { flexDirection: 'row', padding: 10, borderTopWidth: 1, borderColor: '#ccc', backgroundColor: '#f0f0f0' },
+  footerText: { fontWeight: 'bold', textAlign: 'center' },
+  pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 },
+  pageInfo: { fontWeight: 'bold' },
 });
 
 export default InvestmentDetailScreen;
