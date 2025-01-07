@@ -117,3 +117,9 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+project.ext.react = [
+        entryFile: "index.js"
+]
+
+//apply from: "../../node_modules/react-native/react.gradle"
