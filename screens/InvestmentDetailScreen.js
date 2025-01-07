@@ -58,6 +58,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
                 [id],
                 () => {
                   fetchInvestmentDetails();
+                  navigation.navigate('Home');
                 },
                 (error) => {
                   console.error("Gagal menghapus data:", error.message);
