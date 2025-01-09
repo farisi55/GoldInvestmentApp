@@ -54,7 +54,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
           onPress: () => {
             db.transaction((tx) => {
               tx.executeSql(
-                `UPDATE gold_investments SET use_data = 'N' WHERE id = ?;`,
+                `UPDATE gold_investments SET use_data = 'N', sys_update_date = date('now') WHERE id = ?;`,
                 [id],
                 () => {
                   fetchInvestmentDetails();

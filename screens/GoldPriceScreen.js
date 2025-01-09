@@ -19,12 +19,20 @@ const GoldPriceScreen = () => {
         const goldPriceG = goldPriceOZ / OZ_TO_GRAM;
         const goldPriceTola = goldPriceG * TOLA_TO_GRAM;
 
+
+      const formatter = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
         return {
           currency: item.curr,
           goldRates: {
-            "Price per Gram": goldPriceG.toFixed(2),
-            "Price per Tola": goldPriceTola.toFixed(2),
-            "Price per Ounce": goldPriceOZ.toFixed(2),
+            "Price per Gram": formatter.format(goldPriceG),
+            "Price per Tola": formatter.format(goldPriceTola),
+            "Price per Ounce": formatter.format(goldPriceOZ),
           },
         };
       });

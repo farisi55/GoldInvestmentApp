@@ -11,11 +11,13 @@ import SQLite from "react-native-sqlite-storage";
 import RNFS from "react-native-fs"; // Library untuk file system
 import Share from "react-native-share"; // Library untuk share (email, dll)
 import DocumentPicker from "react-native-document-picker"; // Library untuk memilih file
+import { useNavigation } from '@react-navigation/native';
 
 const db = SQLite.openDatabase({ name: "GoldInvestment.db", location: "default" });
 
 export default function BackupRestoreScreen() {
   const [backupFilePath, setBackupFilePath] = useState("");
+  const navigation = useNavigation();
 
   // Fungsi untuk Backup Database ke File JSON
   const handleBackup = async () => {
@@ -23,7 +25,7 @@ export default function BackupRestoreScreen() {
       // Baca data dari database
       db.transaction((tx) => {
         tx.executeSql(
-          `SELECT input_date, sys_timestamp, sys_update_date, weight_gram, price_gold, investment_value, use_data FROM gold_investments WHERE use_data = 'Y';`,
+          `SELECT input_date, weight_gram, price_gold, investment_value, use_data FROM gold_investments WHERE use_data = 'Y';`,
           [],
           async (_, { rows }) => {
             const data = [];
@@ -107,12 +109,10 @@ export default function BackupRestoreScreen() {
 
         data.forEach((item) => {
           tx.executeSql(
-            `INSERT INTO gold_investments (input_date, sys_timestamp, sys_update_date, weight_gram, price_gold, investment_value, use_data)
-              VALUES (?, ?, ?, ?, ?, ?, ?);`,
+            `INSERT INTO gold_investments (input_date, weight_gram, price_gold, investment_value, use_data)
+              VALUES (?, ?, ?, ?, ?);`,
             [
               item.input_date,
-              item.sys_timestamp,
-              item.sys_update_date,
               item.weight_gram,
               item.price_gold,
               item.investment_value,
@@ -141,6 +141,9 @@ export default function BackupRestoreScreen() {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleRestore}>
         <Text style={styles.buttonText}>Restore (Import)</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+              <Text style={styles.buttonText}>Back to Home </Text>
       </TouchableOpacity>
     </View>
   );
