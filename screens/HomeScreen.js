@@ -147,6 +147,12 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Investment Details</Text>
       </TouchableOpacity>
       <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("BackupRestore")}
+            >
+              <Text style={styles.buttonText}>Backup/Restore</Text>
+            </TouchableOpacity>
+      <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Gold Prices")}
       >
