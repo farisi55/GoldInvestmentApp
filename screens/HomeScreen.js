@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  BackHandler, // Import BackHandler
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SQLite from "react-native-sqlite-storage";
@@ -38,6 +39,28 @@ export default function HomeScreen() {
       setCurrentGoldRate(goldPrice); // Perbarui nilai di context
     };
     fetchData();
+
+     // Handle tombol "Back"
+        const backAction = () => {
+          Alert.alert("Konfirmasi", "Apakah Anda yakin ingin keluar dari aplikasi?", [
+            {
+              text: "Tidak",
+              onPress: () => null,
+              style: "cancel",
+            },
+            {
+              text: "Ya",
+              onPress: () => BackHandler.exitApp(), // Keluar aplikasi
+            },
+          ]);
+          return true; // Mencegah tindakan default
+        };
+
+        // Tambahkan listener BackHandler
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+
+        // Bersihkan listener saat komponen unmount
+        return () => backHandler.remove();
   }, []);
 
   // CEK LOG current Gold Rate
