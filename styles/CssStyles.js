@@ -47,6 +47,23 @@ const styles = StyleSheet.create({
   footerText: { fontWeight: 'bold', textAlign: 'center' },
   pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 },
   pageInfo: { fontWeight: 'bold' },
+   containerAddInvestment: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: '#fff',
+    },
+    label: {
+      fontSize: 16,
+      marginBottom: 8,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: '#ccc',
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 20,
+      backgroundColor: '#fff',
+    },
 });
 
 export default styles;

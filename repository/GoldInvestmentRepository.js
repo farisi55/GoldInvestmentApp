@@ -66,3 +66,20 @@ export const deleteInvestment = async (id) => {
     });
   });
 };
+
+export const addInvestmentToDatabase = (inputDate, weightGram, goldRate, investmentValue) => {
+  return new Promise((resolve, reject) => {
+    const formattedDate = inputDate.toISOString().split('T')[0];
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          `INSERT INTO gold_investments (input_date, weight_gram, price_gold, investment_value) VALUES (?, ?, ?, ?)`,
+          [formattedDate, weightGram, goldRate, investmentValue],
+          () => resolve(true),
+          (_, error) => reject(error)
+        );
+      },
+      (error) => reject(error)
+    );
+  });
+};
