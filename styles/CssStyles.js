@@ -38,6 +38,15 @@ const styles = StyleSheet.create({
   spacing: {
     marginVertical: 10,
   },
+  containerDetail: { flex: 1, padding: 10, backgroundColor: '#fff' },
+  headerDetail: { flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderColor: '#ccc', backgroundColor: '#f0f0f0' },
+  headerText: { fontWeight: 'bold', textAlign: 'center' },
+  item: { flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderColor: '#ccc' },
+  column: { textAlign: 'center' },
+  footer: { flexDirection: 'row', padding: 10, borderTopWidth: 1, borderColor: '#ccc', backgroundColor: '#f0f0f0' },
+  footerText: { fontWeight: 'bold', textAlign: 'center' },
+  pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 },
+  pageInfo: { fontWeight: 'bold' },
 });
 
 export default styles;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BackHandler, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { createTables, getTotalInvestment } from "../repository/GoldInvestmentsDB";
+import { createTables, getTotalInvestment } from "../repository/GoldInvestmentRepository";
 import { fetchGoldPrice } from "../utils/GoldPriceHelper";
 import { GoldRateContext } from "../context/GoldRateContext";
 import styles from "../styles/CssStyles";
