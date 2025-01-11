@@ -64,6 +64,40 @@ const styles = StyleSheet.create({
       marginBottom: 20,
       backgroundColor: '#fff',
     },
+    containerGraph: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#fff',
+      },
+      title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+      },
+      picker: {
+        height: 50,
+        marginBottom: 16,
+      },
+      chart: {
+        marginVertical: 10,
+        alignSelf: 'center',
+      },
+      tooltip: {
+        position: 'absolute',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 10,
+        borderRadius: 5,
+      },
+      tooltipText: {
+        color: '#fff',
+        fontSize: 14,
+      },
+      noData: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#888',
+      },
 });
 
 export default styles;

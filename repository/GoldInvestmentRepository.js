@@ -83,3 +83,46 @@ export const addInvestmentToDatabase = (inputDate, weightGram, goldRate, investm
     );
   });
 };
+
+export const fetchGraphData = (days) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          `SELECT input_date, SUM(weight_gram) AS total_weight, SUM(investment_value) AS total_value
+           FROM gold_investments
+           WHERE use_data = "Y" AND input_date >= date('now', '-${days} days')
+           GROUP BY input_date
+           ORDER BY input_date ASC;`,
+          [],
+          (tx, results) => {
+            const rows = results.rows;
+            let data = [];
+            let cumulativeWeight = 0;
+            let cumulativeInvestment = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+              const item = rows.item(i);
+              cumulativeWeight += item.total_weight;
+              cumulativeInvestment += item.total_value;
+
+              const formattedDate = new Date(item.input_date).toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+              });
+
+              data.push({
+                label: formattedDate,
+                weight: cumulativeWeight,
+                investment: cumulativeInvestment,
+              });
+            }
+            resolve(data);
+          },
+          (error) => reject(error)
+        );
+      },
+      (error) => reject(error)
+    );
+  });
+};
