@@ -98,6 +98,68 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#888',
       },
+      containerAbout: {
+          flex: 1,
+          padding: 20,
+          backgroundColor: "#f5f5f5",
+        },
+        headerAbout: {
+          fontSize: 24,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        loadingContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        card: {
+          backgroundColor: "#fff",
+          padding: 15,
+          borderRadius: 10,
+          marginVertical: 10,
+          shadowColor: "#000",
+          shadowOpacity: 0.2,
+          shadowRadius: 5,
+          elevation: 3,
+        },
+        currency: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 5,
+        },
+        rateText: {
+          fontSize: 16,
+          color: "#333",
+        },
+        footerAbout: {
+          marginTop: 20,
+          padding: 20,
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 2,
+          alignItems: "center",
+        },
+        devHeader: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+          color: "#007bff",
+        },
+        devName: {
+          fontSize: 16,
+          fontWeight: "600",
+          marginBottom: 10,
+        },
+        link: {
+          fontSize: 14,
+          color: "#007bff",
+          marginBottom: 5,
+          textDecorationLine: "underline",
+        },
 });
 
 export default styles;
