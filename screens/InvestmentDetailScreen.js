@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { fetchInvestmentDetails, deleteInvestment } from '../repository/GoldInvestmentRepository';
 import InvestmentDetailList from '../components/InvestmentDetailList';
 import Pagination from '../components/Pagination';
@@ -10,7 +10,7 @@ const ITEMS_PER_PAGE = 10; // Jumlah item per halaman
 const InvestmentDetailScreen = ({ navigation }) => {
   const [investmentHistory, setInvestmentHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Halaman saat ini
-  const [orderByDate, setOrderByDate] = useState('DESC'); // Jumlah item per halaman
+  const [orderByDate, setOrderByDate] = useState('DESC'); // Urutkan berdasarkan tanggal
 
   useEffect(() => {
     fetchData();
@@ -22,9 +22,31 @@ const InvestmentDetailScreen = ({ navigation }) => {
     setCurrentPage(1);
   };
 
+  const confirmDelete = (id) => {
+    Alert.alert(
+      'Konfirmasi Hapus',
+      'Apakah Anda yakin ingin menghapus item ini?',
+      [
+        { text: 'Tidak', style: 'cancel' },
+        {
+          text: 'Ya',
+          onPress: async () => {
+            await handleDelete(id);
+            navigation.navigate('Home'); // Navigasi ke halaman Home
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const handleDelete = async (id) => {
-    await deleteInvestment(id);
-    fetchData();
+    try {
+      await deleteInvestment(id);
+      fetchData();
+    } catch (error) {
+      Alert.alert('Error', 'Terjadi kesalahan saat menghapus data.');
+    }
   };
 
   const toggleOrder = () => setOrderByDate((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'));
@@ -38,7 +60,7 @@ const InvestmentDetailScreen = ({ navigation }) => {
       <InvestmentDetailList
         data={currentData}
         toggleOrder={toggleOrder}
-        handleDelete={handleDelete}
+        handleDelete={confirmDelete} // Ubah menjadi `confirmDelete`
         startIndex={startIndex}
         orderByDate={orderByDate}
       />
