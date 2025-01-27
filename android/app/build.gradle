@@ -161,4 +161,4 @@ project.ext.react = [
         inputExcludes: ["android/**", "ios/**"]
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../react.gradle"

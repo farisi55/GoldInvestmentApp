@@ -1,0 +1,48 @@
+// react.gradle
+
+import com.android.build.api.transform.*
+import com.android.build.gradle.internal.pipeline.*
+import org.apache.tools.ant.taskdefs.condition.*
+
+def config = project.hasProperty("react") ? project.react : []
+
+def cliPath = config.cliPath ?: "node_modules/react-native/cli.js"
+def bundleCommand = config.bundleCommand ?: "bundle"
+
+def reactRoot = file(config.root ?: "../../")
+def inputExcludes = config.inputExcludes ?: ["android/**", "ios/**"]
+def bundleConfig = config.bundleConfig ?: null
+
+android {
+    applicationVariants.all { variant ->
+        def targetName = variant.name.capitalize()
+        def targetPath = variant.dirName
+
+        // Create a task to bundle JS and assets
+        def bundleJsAndAssetsTask = tasks.create(
+                name: "bundle${targetName}JsAndAssets",
+                type: Exec) {
+            group = "react"
+            description = "Bundle JS and assets for the ${targetName} build."
+
+            def devEnabled = !(config."devDisabledIn${targetName}" ?: targetName.toLowerCase().contains("release"))
+
+            workingDir reactRoot
+            commandLine "node", cliPath, bundleCommand,
+                    "--platform", "android",
+                    "--dev", devEnabled,
+                    "--reset-cache",
+                    "--entry-file", config.entryFile ?: "index.js",
+                    "--bundle-output", "$buildDir/intermediates/assets/${targetPath}/index.android.bundle",
+                    "--assets-dest", "$buildDir/intermediates/res/merged/${targetPath}"
+
+            if (bundleConfig) {
+                args("--config", bundleConfig)
+            }
+        }
+
+        // Hook the bundle task into the build process
+        variant.mergeAssetsProvider.configure { dependsOn(bundleJsAndAssetsTask) }
+    }
+}
+
