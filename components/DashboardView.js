@@ -1,5 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import {
+  GAMBannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 
 const DashboardView = ({
   styles,
@@ -49,6 +54,13 @@ const DashboardView = ({
         <Text style={styles.buttonText}>Gold Prices</Text>
       </TouchableOpacity>
       <Text style={styles.title}>Welcome to Gold Investment App</Text>
+      <GAMBannerAd
+              unitId={TestIds.BANNER}
+              sizes={[BannerAdSize.FULL_BANNER]}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+            />
     </View>
   );
 };
