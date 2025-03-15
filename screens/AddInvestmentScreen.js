@@ -1,56 +1,16 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import DatePickerInput from '../components/DatePickerInput';
 import { addInvestmentToDatabase } from '../repository/GoldInvestmentRepository';
 import { GoldRateContext } from '../context/GoldRateContext';
 import styles from '../styles/CssStyles';
-import { InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
-
-// Membuat iklan interstitial
-const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
-  requestNonPersonalizedAdsOnly: true,
-  keywords: ['fashion', 'clothing'],
-});
+import AdManager from '../utils/AdManager'; // Import AdManager
 
 const AddInvestmentScreen = ({ navigation }) => {
   const [inputDate, setInputDate] = useState(new Date());
   const [goldWeight, setGoldWeight] = useState('');
   const [investmentValue, setInvestmentValue] = useState('');
   const { currentGoldRate } = useContext(GoldRateContext);
-  const [adLoaded, setAdLoaded] = useState(false); // Status apakah iklan sudah dimuat
-  const [isWaiting, setIsWaiting] = useState(false); // Status apakah sedang menunggu
-
-
-    useEffect(() => {
-      // Listener untuk event iklan
-      const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
-        setAdLoaded(true);
-        setIsWaiting(false); // Stop timer ketika iklan selesai dimuat
-      });
-
-      const unsubscribeError = interstitial.addAdEventListener(AdEventType.ERROR, (error) => {
-        console.error('Ad failed to load:', error);
-      });
-
-      // Memuat iklan
-      interstitial.load();
-
-      // Membersihkan listener ketika komponen unmount
-      return () => {
-        unsubscribe();
-        unsubscribeError();
-      };
-    }, []);
-
-  const handleShowAd = () => {
-      if (adLoaded) {
-        interstitial.show();
-        setAdLoaded(false); // Reset status setelah iklan ditampilkan
-        interstitial.load(); // Memulai kembali proses pemuatan iklan
-      } else {
-        Alert.alert('Iklan belum siap', 'Tunggu hingga iklan selesai dimuat.');
-      }
-    };
 
   const handleGoldWeightChange = (weight) => {
     setGoldWeight(weight);
@@ -82,13 +42,15 @@ const AddInvestmentScreen = ({ navigation }) => {
     }
 
     try {
-      const success = await addInvestmentToDatabase(inputDate, parseFloat(goldWeight), currentGoldRate, parseFloat(investmentValue.replace(/\D/g, '')));
+      const success = await addInvestmentToDatabase(
+        inputDate,
+        parseFloat(goldWeight),
+        currentGoldRate,
+        parseFloat(investmentValue.replace(/\D/g, ''))
+      );
+
       if (success) {
-          if (!adLoaded) {
-             //startAdTimer(); // Mulai timer jika iklan belum siap
-          } else {
-            handleShowAd(); // Tampilkan iklan jika sudah siap
-          }
+        AdManager.showAd(); // Gunakan AdManager untuk menampilkan iklan
         Alert.alert('Sukses', 'Investasi berhasil ditambahkan!');
         navigation.navigate('Home');
       }
