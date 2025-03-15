@@ -1,17 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import {
-  GAMBannerAd,
-  BannerAdSize,
-  TestIds,
-} from 'react-native-google-mobile-ads';
+import BannerAdComponent from "./BannerAdComponent"; // Import komponen banner iklan
 
-const DashboardView = ({
-  styles,
-  currentGoldRate,
-  totalWeight,
-  navigation,
-}) => {
+const DashboardView = ({ styles, currentGoldRate, totalWeight, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.goldRate}>
@@ -54,13 +45,9 @@ const DashboardView = ({
         <Text style={styles.buttonText}>Gold Prices</Text>
       </TouchableOpacity>
       <Text style={styles.title}>Welcome to Gold Investment App</Text>
-      <GAMBannerAd
-              unitId={TestIds.BANNER}
-              sizes={[BannerAdSize.FULL_BANNER]}
-              requestOptions={{
-                requestNonPersonalizedAdsOnly: true,
-              }}
-            />
+
+      {/* Menggunakan komponen BannerAdComponent */}
+      <BannerAdComponent />
     </View>
   );
 };
