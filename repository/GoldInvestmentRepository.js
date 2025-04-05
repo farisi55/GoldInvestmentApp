@@ -19,14 +19,27 @@ export function createTables() {
   });
 }
 
-export function getTotalInvestment() {
+export function getTotalInvestmentData() {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        `SELECT SUM(weight_gram) AS totalWeight FROM gold_investments WHERE use_data = 'Y'`,
+        `SELECT
+            SUM(weight_gram) AS totalWeight,
+            SUM(investment_value) AS totalInvestmentValue
+         FROM gold_investments
+         WHERE use_data = 'Y'`,
         [],
-        (_, { rows }) => resolve(rows.item(0).totalWeight || 0),
-        (_, error) => reject(error)
+        (_, { rows }) => {
+          const item = rows.item(0);
+          resolve({
+            totalWeight: item.totalWeight || 0,
+            totalInvestmentValue: item.totalInvestmentValue || 0
+          });
+        },
+        (_, error) => {
+          console.error("Error fetching investment data", error);
+          reject(error);
+        }
       );
     });
   });

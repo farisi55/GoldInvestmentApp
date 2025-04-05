@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BackHandler, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { createTables, getTotalInvestment } from "../repository/GoldInvestmentRepository";
+import { createTables, getTotalInvestmentData } from "../repository/GoldInvestmentRepository";
 import { fetchGoldPrice } from "../utils/GoldPriceHelper";
 import { GoldRateContext } from "../context/GoldRateContext";
 import styles from "../styles/CssStyles";
@@ -10,6 +10,7 @@ import useBackHandler from "../utils/ButtonBackHandler"; // Import custom hook
 
 export default function HomeScreen() {
   const [totalWeight, setTotalWeight] = useState(0);
+  const [totalInvestmentValue, setTotalInvestmentValue] = useState(0);
   const { currentGoldRate, setCurrentGoldRate } = useContext(GoldRateContext);
   const navigation = useNavigation();
   useBackHandler(); // Gunakan custom hook untuk menangani tombol back
@@ -21,10 +22,10 @@ export default function HomeScreen() {
       setCurrentGoldRate(goldPrice);
 
       createTables();
-      const total = await getTotalInvestment();
-      setTotalWeight(total);
+      const { totalWeight, totalInvestmentValue } = await getTotalInvestmentData();
+              setTotalWeight(totalWeight);
+              setTotalInvestmentValue(totalInvestmentValue);
     }
-
     init();
   }, []);
 
@@ -34,6 +35,7 @@ export default function HomeScreen() {
       styles={styles}
       currentGoldRate={currentGoldRate}
       totalWeight={totalWeight}
+      totalInvestmentValue={totalInvestmentValue}
       navigation={navigation}
     />
   );
