@@ -1,50 +1,64 @@
-import { Alert } from 'react-native';
-import { InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
+
+// Ganti ini dengan unit ID asli kamu dari AdMob dashboard (pastikan sesuai dengan platform)
+const productionUnitIds = {
+  banner: 'ca-app-pub-xxxxxxxxxxxxxxxx/BBBBBBBBBB',
+  interstitial: 'ca-app-pub-xxxxxxxxxxxxxxxx/IIIIIIIIII',
+  rewarded: 'ca-app-pub-xxxxxxxxxxxxxxxx/RRRRRRRRRR',
+  appOpen: 'ca-app-pub-xxxxxxxxxxxxxxxx/OOOOOOOOOO',
+};
+
+// Jika kamu masih dalam development, gunakan TestIds
+const isDev = __DEV__;
+
+const unitIds = {
+  banner: isDev ? TestIds.BANNER : productionUnitIds.banner,
+  interstitial: isDev ? TestIds.INTERSTITIAL : productionUnitIds.interstitial,
+  rewarded: isDev ? TestIds.REWARDED : productionUnitIds.rewarded,
+  appOpen: isDev ? TestIds.APP_OPEN : productionUnitIds.appOpen,
+};
 
 class AdManager {
   constructor() {
-    this.interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
+    this.interstitial = InterstitialAd.createForAdRequest(unitIds.interstitial, {
       requestNonPersonalizedAdsOnly: true,
       keywords: [
         'emas',
         'investasi',
         'keuangan',
-        'syariah',
         'logam mulia',
-        'gold investment',
-        'financial planning',
-        'hijrah finansial',
-        'pengelolaan uang',
-        'saving goals',
-        'tabungan emas',
-        'investasi halal',
-        'keuangan syariah',
+        'syariah',
+        'tabungan',
+        'reksa dana',
+        'perencanaan keuangan',
       ],
     });
 
-    this.adLoaded = false;
+    this.loaded = false;
 
-    // Listener untuk menangani event iklan
     this.interstitial.addAdEventListener(AdEventType.LOADED, () => {
-      this.adLoaded = true;
+      this.loaded = true;
     });
 
-    this.interstitial.addAdEventListener(AdEventType.ERROR, (error) => {
-      console.error('Ad failed to load:', error);
+    this.interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+      this.loaded = false;
+      this.interstitial.load(); // Siapkan iklan berikutnya
     });
 
-    // Load iklan pertama kali
+    // Pertama kali load iklan
     this.interstitial.load();
   }
 
   showAd() {
-    if (this.adLoaded) {
+    if (this.loaded) {
       this.interstitial.show();
-      this.adLoaded = false; // Reset status setelah iklan ditampilkan
-      this.interstitial.load(); // Muat ulang iklan untuk ditampilkan kembali di lain waktu
     } else {
-      //Alert.alert('Iklan belum siap', 'Tunggu hingga iklan selesai dimuat.');
+      console.log('Interstitial ad not ready');
     }
+  }
+
+  getBannerUnitId() {
+    return unitIds.banner;
   }
 }
 
