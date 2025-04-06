@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions, Button } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import { useNavigation } from '@react-navigation/native';
 import styles from '../styles/CssStyles';
+import BannerAdComponent from "./BannerAdComponent";
+import AdManager from '../utils/AdManager'; // Import AdManager
 
 const ChartComponent = ({ data, onDataPointClick, tooltip }) => {
   const screenWidth = Dimensions.get('window').width;
 
+  const navigation = useNavigation();
+
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: 'space-between' }}>
       <LineChart
         data={{
           labels: data.map((item) => item.label),
@@ -43,7 +48,20 @@ const ChartComponent = ({ data, onDataPointClick, tooltip }) => {
           </Text>
         </View>
       )}
+
+      <Button
+        title="Back to Home"
+        onPress={() => {
+        AdManager.showAd();
+        navigation.navigate('Home');
+        }}
+      />
+      <View style={{ marginTop: 10 }}>
+        <BannerAdComponent />
+      </View>
     </View>
+
+
   );
 };
 

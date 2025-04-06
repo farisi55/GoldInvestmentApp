@@ -60,17 +60,20 @@ const InvestmentDetailScreen = ({ navigation }) => {
       <InvestmentDetailList
         data={currentData}
         toggleOrder={toggleOrder}
-        handleDelete={confirmDelete} // Ubah menjadi `confirmDelete`
+        handleDelete={confirmDelete}
         startIndex={startIndex}
         orderByDate={orderByDate}
-      />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
+        pagination={
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
+        }
       />
     </View>
   );
+
 };
 
 export default InvestmentDetailScreen;

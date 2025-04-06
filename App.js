@@ -6,6 +6,7 @@ import GraphScreen from './screens/GraphScreen';
 import AddInvestmentScreen from './screens/AddInvestmentScreen';
 import InvestmentDetailScreen from './screens/InvestmentDetailScreen';
 import GoldPriceScreen from "./screens/GoldPriceScreen";
+import AboutScreen from "./screens/AboutScreen";
 import BackupRestoreScreen from "./screens/BackupRestoreScreen";
 import { GoldRateProvider } from "./context/GoldRateContext"; // Import provider
 
@@ -29,6 +30,7 @@ export default function App() {
             <Stack.Screen name="InvestmentDetail" component={InvestmentDetailScreen} />
             <Stack.Screen name="BackupRestore" component={BackupRestoreScreen} />
             <Stack.Screen name="Gold Prices" component={GoldPriceScreen} />
+            <Stack.Screen name="About" component={AboutScreen} />
           </Stack.Navigator>
         </NavigationContainer>
     </GoldRateProvider>

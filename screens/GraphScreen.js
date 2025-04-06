@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
 import ChartComponent from '../components/ChartComponent';
 import { fetchGraphData } from '../repository/GoldInvestmentRepository';
 import styles from '../styles/CssStyles';
+
 
 const GraphScreen = () => {
   const [chartData, setChartData] = useState([]);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: null });
   const [selectedPeriod, setSelectedPeriod] = useState('30'); // Default 1 bulan
-  const navigation = useNavigation();
+
 
   useEffect(() => {
     fetchData(selectedPeriod);
@@ -60,7 +60,6 @@ const GraphScreen = () => {
       ) : (
         <Text style={styles.noData}>Belum ada data investasi.</Text>
       )}
-      <Button title="Back to Home" onPress={() => navigation.navigate('Home')} />
     </View>
   );
 };

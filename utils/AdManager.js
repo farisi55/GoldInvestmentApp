@@ -5,7 +5,21 @@ class AdManager {
   constructor() {
     this.interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
       requestNonPersonalizedAdsOnly: true,
-      keywords: ['fashion', 'clothing'],
+      keywords: [
+        'emas',
+        'investasi',
+        'keuangan',
+        'syariah',
+        'logam mulia',
+        'gold investment',
+        'financial planning',
+        'hijrah finansial',
+        'pengelolaan uang',
+        'saving goals',
+        'tabungan emas',
+        'investasi halal',
+        'keuangan syariah',
+      ],
     });
 
     this.adLoaded = false;
@@ -29,7 +43,7 @@ class AdManager {
       this.adLoaded = false; // Reset status setelah iklan ditampilkan
       this.interstitial.load(); // Muat ulang iklan untuk ditampilkan kembali di lain waktu
     } else {
-      Alert.alert('Iklan belum siap', 'Tunggu hingga iklan selesai dimuat.');
+      //Alert.alert('Iklan belum siap', 'Tunggu hingga iklan selesai dimuat.');
     }
   }
 }

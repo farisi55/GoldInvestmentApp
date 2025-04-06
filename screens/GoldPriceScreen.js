@@ -31,7 +31,6 @@ const GoldPriceScreen = () => {
     <View style={styles.containerAbout}>
       <Text style={styles.headerAbout}>Gold Rates (Realtime)</Text>
       <GoldRatesList goldRates={goldRates} />
-      <DeveloperInfo />
     </View>
   );
 };

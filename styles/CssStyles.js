@@ -26,13 +26,15 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	button: {
-		backgroundColor: "#007bff",
-		padding: 15,
-		borderRadius: 10,
-		marginBottom: 15,
-		width: "80%",
-		alignItems: "center",
-	},
+      backgroundColor: "#007bff",
+      paddingVertical: 15,
+      paddingHorizontal: 30,
+      borderRadius: 10,
+      marginBottom: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      width: "80%", // biar ukurannya konsisten dan enak dilihat
+    },
 	buttonText: {
 		color: "#fff",
 		fontSize: 16,
@@ -80,14 +82,32 @@ const styles = StyleSheet.create({
 		textAlign: 'center'
 	},
 	pagination: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		padding: 10
-	},
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 10,
+      marginTop: 10,
+      backgroundColor: '#f0f0f0',
+      borderRadius: 8,
+    },
+    paginationButton: {
+      backgroundColor: '#007bff',
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 6,
+    },
+    paginationButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    disabledButton: {
+      backgroundColor: '#ccc',
+    },
 	pageInfo: {
-		fontWeight: 'bold'
-	},
+      fontSize: 14,
+      fontWeight: '500',
+    },
 
 	// Styles for AddInvestmentScreen
 	containerAddInvestment: {
@@ -190,23 +210,29 @@ const styles = StyleSheet.create({
 		elevation: 2,
 		alignItems: "center",
 	},
+	//Styles for AboutScreen
 	devHeader: {
-		fontSize: 18,
-		fontWeight: "bold",
-		marginBottom: 10,
-		color: "#007bff",
-	},
-	devName: {
-		fontSize: 16,
-		fontWeight: "600",
-		marginBottom: 10,
-	},
-	link: {
-		fontSize: 14,
-		color: "#007bff",
-		marginBottom: 5,
-		textDecorationLine: "underline",
-	},
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+      devName: {
+        fontSize: 16,
+        marginBottom: 10,
+    },
+      link: {
+        color: "blue",
+        marginBottom: 8,
+        textDecorationLine: "underline",
+    },
+	safeArea: {
+        flex: 1,
+        justifyContent: "space-between",
+        backgroundColor: "#fff", // Sesuaikan jika ada tema
+    },
+      content: {
+        padding: 20,
+    },
 });
 
 export default styles;
