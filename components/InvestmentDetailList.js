@@ -84,13 +84,15 @@ const InvestmentDetailList = ({ data, toggleOrder, handleDelete, startIndex, pag
 
         {/* Tombol kembali */}
         <View style={{ paddingHorizontal: 16, marginBottom: 8 }}>
-          <Button
-            title="Back to Home"
+         <TouchableOpacity
+            style={styles.backButton}
             onPress={() => {
               AdManager.showAd();
               navigation.navigate('Home');
             }}
-          />
+          >
+            <Text style={styles.backButtonText}>← Back to Home</Text>
+         </TouchableOpacity>
         </View>
 
         {/* Iklan banner di paling bawah */}

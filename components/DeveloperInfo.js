@@ -23,7 +23,7 @@ const DeveloperInfo = () => {
           <Text style={styles.devHeader}>About the Developer</Text>
           <Text style={styles.devName}>Banu Salman</Text>
 
-          <TouchableOpacity onPress={() => Linking.openURL("https://github.com/farisi55/GoldInvestmentApp")}>
+          <TouchableOpacity onPress={() => Linking.openURL("https://github.com/farisi55")}>
             <Text style={styles.link}>GitHub</Text>
           </TouchableOpacity>
 
@@ -38,13 +38,15 @@ const DeveloperInfo = () => {
 
         {/* Tombol dan iklan di bagian bawah */}
         <View style={{ padding: 16 }}>
-          <Button
-            title="Back to Home"
-            onPress={() => {
-              AdManager.showAd();
-              navigation.navigate('Home');
-            }}
-          />
+          <TouchableOpacity
+             style={styles.backButton}
+             onPress={() => {
+               AdManager.showAd();
+               navigation.navigate('Home');
+             }}
+           >
+             <Text style={styles.backButtonText}>← Back to Home</Text>
+          </TouchableOpacity>
           <View style={{ marginTop: 10 }}>
             <BannerAdComponent />
           </View>

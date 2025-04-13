@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert, SafeAreaView  } from 'react-native';
+import { View, Text, TextInput, Button, Alert, SafeAreaView, TouchableOpacity  } from 'react-native';
 import DatePickerInput from '../components/DatePickerInput';
 import { addInvestmentToDatabase } from '../repository/GoldInvestmentRepository';
 import { GoldRateContext } from '../context/GoldRateContext';
@@ -86,7 +86,12 @@ const AddInvestmentScreen = ({ navigation }) => {
             onChangeText={handleInvestmentValueChange}
           />
 
-          <Button title="Tambah Investasi" onPress={addInvestment} />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={addInvestment}
+          >
+            <Text style={styles.backButtonText}>Tambah Investasi</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Banner Ad di bagian bawah */}

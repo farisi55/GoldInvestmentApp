@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions, Button } from 'react-native';
+import { View, Text, Dimensions, Button, TouchableOpacity } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../styles/CssStyles';
@@ -49,13 +49,15 @@ const ChartComponent = ({ data, onDataPointClick, tooltip }) => {
         </View>
       )}
 
-      <Button
-        title="Back to Home"
-        onPress={() => {
-        AdManager.showAd();
-        navigation.navigate('Home');
-        }}
-      />
+      <TouchableOpacity
+         style={styles.backButton}
+         onPress={() => {
+           AdManager.showAd();
+           navigation.navigate('Home');
+         }}
+       >
+         <Text style={styles.backButtonText}>← Back to Home</Text>
+      </TouchableOpacity>
       <View style={{ marginTop: 10 }}>
         <BannerAdComponent />
       </View>

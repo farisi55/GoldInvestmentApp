@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, SafeAreaView, Button } from "react-native";
+import { View, Text, FlatList, SafeAreaView, Button, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import styles from "../styles/CssStyles";
 import BannerAdComponent from "./BannerAdComponent";
@@ -29,13 +29,15 @@ const GoldRatesList = ({ goldRates }) => {
 
         {/* Tombol dan iklan di bawah */}
         <View style={{ padding: 16 }}>
-          <Button
-            title="Back to Home"
-            onPress={() => {
-              AdManager.showAd();
-              navigation.navigate('Home');
-            }}
-          />
+          <TouchableOpacity
+             style={styles.backButton}
+             onPress={() => {
+               AdManager.showAd();
+               navigation.navigate('Home');
+             }}
+           >
+             <Text style={styles.backButtonText}>← Back to Home</Text>
+          </TouchableOpacity>
         </View>
 
         <BannerAdComponent />

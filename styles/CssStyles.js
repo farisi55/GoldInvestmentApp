@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fdfdfd", // Soft off-white
+    backgroundColor: "#FFFDF5", // soft creamy gold
     paddingHorizontal: 20,
     paddingTop: 30,
     paddingBottom: 10,
@@ -12,24 +12,24 @@ const styles = StyleSheet.create({
   goldRate: {
     fontSize: 16,
     marginBottom: 24,
-    color: "#666",
+    color: "#8E793E", // soft gold brown
     textAlign: "center",
   },
   header: {
     fontSize: 22,
     fontWeight: "700",
     marginBottom: 10,
-    color: "#333",
+    color: "#4A3F1D", // deep soft brown
     textAlign: "center",
   },
   summary: {
     fontSize: 16,
     marginBottom: 6,
-    color: "#444",
+    color: "#5C4F2D",
     textAlign: "center",
   },
   button: {
-    backgroundColor: "#FFB200", // Gold tone
+    backgroundColor: "#FFFDF5", // Gold
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 12,
@@ -37,6 +37,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "80%",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 3,
   },
   buttonText: {
     color: "#fff",
@@ -51,38 +55,41 @@ const styles = StyleSheet.create({
   containerDetail: {
     flex: 1,
     padding: 12,
-    backgroundColor: "#fefefe",
+    backgroundColor: "#FFFDF5",
   },
   headerDetail: {
     flexDirection: "row",
     padding: 10,
     borderBottomWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#f9f9f9",
+    borderColor: "#EADCA8",
+    backgroundColor: "#FFFDF5",
   },
   headerText: {
     fontWeight: "bold",
     textAlign: "center",
+    color: "#4A3F1D",
   },
   item: {
     flexDirection: "row",
     padding: 10,
     borderBottomWidth: 1,
-    borderColor: "#eee",
+    borderColor: "#F2E9C4",
   },
   column: {
     textAlign: "center",
+    color: "#4A3F1D",
   },
   footer: {
     flexDirection: "row",
     padding: 10,
     borderTopWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#f0f0f0",
+    borderColor: "#EADCA8",
+    backgroundColor: "#FFFDF5",
   },
   footerText: {
     fontWeight: "bold",
     textAlign: "center",
+    color: "#4A3F1D",
   },
 
   // Pagination
@@ -92,11 +99,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     marginTop: 10,
-    backgroundColor: "#fafafa",
+    backgroundColor: "#FFFDF5",
     borderRadius: 10,
   },
   paginationButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#FFFDF5",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
@@ -107,45 +114,47 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   disabledButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#E0E0E0",
   },
   pageInfo: {
     fontSize: 14,
     fontWeight: "500",
+    color: "#5C4F2D",
   },
 
-  // Add Investment Screen
+  // Add Investment
   containerAddInvestment: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFDF5",
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
-    color: "#333",
+    color: "#4A3F1D",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D4C29A",
     padding: 10,
     borderRadius: 6,
     marginBottom: 20,
-    backgroundColor: "#fdfdfd",
+    backgroundColor: "#FFFDF5",
+    color: "#333",
   },
 
   // Graph Screen
   containerGraph: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFDF5",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
-    color: "#444",
+    color: "#4A3F1D",
   },
   picker: {
     height: 50,
@@ -168,20 +177,20 @@ const styles = StyleSheet.create({
   noData: {
     textAlign: "center",
     fontSize: 16,
-    color: "#888",
+    color: "#999",
   },
 
-  // About / Price Screen
+  // About / Harga Emas Screen
   containerAbout: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFDF5",
   },
   headerAbout: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#4A3F1D",
   },
   loadingContainer: {
     flex: 1,
@@ -194,7 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginVertical: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 2,
   },
@@ -206,7 +215,7 @@ const styles = StyleSheet.create({
   },
   rateText: {
     fontSize: 16,
-    color: "#555",
+    color: "#666",
   },
   footerAbout: {
     marginTop: 20,
@@ -220,29 +229,83 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // About Screen
+  // Developer / Info App
   devHeader: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#4A3F1D",
   },
   devName: {
     fontSize: 16,
     marginBottom: 10,
+    color: "#4A3F1D",
   },
   link: {
-    color: "#007bff",
+    color: "#FFB200",
     marginBottom: 8,
     textDecorationLine: "underline",
   },
   safeArea: {
     flex: 1,
     justifyContent: "space-between",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFDF5",
   },
   content: {
     padding: 20,
   },
+
+  // Backup Restore Screen
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  backupRestoreContainer: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 24,
+    marginBottom: 40,
+  },
+  backupRestoreButton: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  backupRestoreIcon: {
+    width: 80,
+    height: 80,
+    marginBottom: 12,
+  },
+  backupRestoreText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  backButton: {
+    backgroundColor: '#FFB200',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
 });
 
 export default styles;

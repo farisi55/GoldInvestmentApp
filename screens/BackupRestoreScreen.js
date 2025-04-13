@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   Image,
   SafeAreaView,
   ScrollView,
@@ -18,65 +17,60 @@ const BackupRestoreScreen = () => {
   const navigation = useNavigation();
 
   return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}>
-            <Text style={[styles.header, { textAlign: 'center', marginBottom: 30 }]}>
-              Backup & Restore
-            </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Text style={[styles.header, { textAlign: 'center', marginBottom: 30 }]}>
+            Backup & Restore
+          </Text>
 
-            <View style={{ alignItems: 'center' }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-                {/* Backup Button with Image */}
-                <TouchableOpacity
-                  style={{ alignItems: 'center' }}
-                  onPress={() => {
-                    AdManager.showAd(handleBackup);
-                  }}
-                >
-                  <Image
-                    source={require('../assets/icons/backup.png')}
-                    style={{ width: 64, height: 64, marginBottom: 8 }}
-                    resizeMode="contain"
-                  />
-                  <Text style={{ fontSize: 16 }}>Backup</Text>
-                </TouchableOpacity>
-
-                {/* Restore Button with Image */}
-                <TouchableOpacity
-                  style={{ alignItems: 'center' }}
-                  onPress={() => {
-                    AdManager.showAd();
-                    handleRestore();
-                  }}
-                >
-                  <Image
-                    source={require('../assets/icons/restore.png')}
-                    style={{ width: 64, height: 64, marginBottom: 8 }}
-                    resizeMode="contain"
-                  />
-                  <Text style={{ fontSize: 16 }}>Restore</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.spacing} />
-            <View style={{ marginTop: 20 }}>
-              <Button
-                title="Back to Home"
-                onPress={() => {
-                  AdManager.showAd();
-                  navigation.navigate('Home');
-                }}
+          <View style={styles.backupRestoreContainer}>
+            {/* Backup Button */}
+            <TouchableOpacity
+              style={styles.backupRestoreButton}
+              onPress={() => AdManager.showAd(handleBackup)}
+            >
+              <Image
+                source={require('../assets/icons/backup.png')}
+                style={styles.backupRestoreIcon}
+                resizeMode="contain"
               />
-            </View>
-          </ScrollView>
+              <Text style={styles.backupRestoreText}>Backup</Text>
+            </TouchableOpacity>
 
-          {/* Banner di bawah */}
-          <BannerAdComponent />
-        </View>
-      </SafeAreaView>
-    );
-  };
+            {/* Restore Button */}
+            <TouchableOpacity
+              style={styles.backupRestoreButton}
+              onPress={() => {
+                AdManager.showAd();
+                handleRestore();
+              }}
+            >
+              <Image
+                source={require('../assets/icons/restore.png')}
+                style={styles.backupRestoreIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.backupRestoreText}>Restore</Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              AdManager.showAd();
+              navigation.navigate('Home');
+            }}
+          >
+            <Text style={styles.backButtonText}>← Back to Home</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        {/* Banner di bagian paling bawah */}
+        <BannerAdComponent />
+      </View>
+    </SafeAreaView>
+  );
+};
 
 export default BackupRestoreScreen;
