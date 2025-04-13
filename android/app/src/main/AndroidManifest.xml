@@ -1,10 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.goldinvestmentapp"> <!-- Pastikan atribut package benar -->
+    package="com.goldinvestmentapp">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Application -->
     <application
         android:name=".MainApplication"
         android:label="@string/app_name"
@@ -28,4 +27,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

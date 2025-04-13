@@ -1,10 +1,11 @@
 import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
+import Config from 'react-native-config';
 
 const productionUnitIds = {
-  banner: 'ca-app-pub-xxxxxxxxxxxxxxxx/BBBBBBBBBB',
-  interstitial: 'ca-app-pub-xxxxxxxxxxxxxxxx/IIIIIIIIII',
-  rewarded: 'ca-app-pub-xxxxxxxxxxxxxxxx/RRRRRRRRRR',
-  appOpen: 'ca-app-pub-xxxxxxxxxxxxxxxx/OOOOOOOOOO',
+  banner: Config.ADMOB_BANNER_UNIT_ID,
+  interstitial: Config.ADMOB_INTERSTITIAL_UNIT_ID,
+  rewarded: Config.ADMOB_REWARDED_UNIT_ID,
+  appOpen: Config.ADMOB_APPOPEN_UNIT_ID,
 };
 
 const isDev = __DEV__;
@@ -21,14 +22,8 @@ class AdManager {
     this.interstitial = InterstitialAd.createForAdRequest(unitIds.interstitial, {
       requestNonPersonalizedAdsOnly: true,
       keywords: [
-        'emas',
-        'investasi',
-        'keuangan',
-        'logam mulia',
-        'syariah',
-        'tabungan',
-        'reksa dana',
-        'perencanaan keuangan',
+        'emas', 'investasi', 'keuangan', 'logam mulia', 'syariah',
+        'tabungan', 'reksa dana', 'perencanaan keuangan',
       ],
     });
 
@@ -42,15 +37,12 @@ class AdManager {
     this.interstitial.addAdEventListener(AdEventType.CLOSED, () => {
       this.loaded = false;
       this.interstitial.load(); // Siapkan iklan berikutnya
-
-      // Jalankan callback jika ada
       if (this.onCloseCallback) {
         this.onCloseCallback();
-        this.onCloseCallback = null; // Reset setelah dipanggil
+        this.onCloseCallback = null;
       }
     });
 
-    // Load pertama kali
     this.interstitial.load();
   }
 
@@ -60,7 +52,6 @@ class AdManager {
       this.interstitial.show();
     } else {
       console.log('Interstitial ad not ready');
-      // Jalankan langsung jika iklan tidak siap
       if (callback) callback();
     }
   }
