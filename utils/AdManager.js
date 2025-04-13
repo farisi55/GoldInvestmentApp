@@ -1,6 +1,5 @@
 import { InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 
-// Ganti ini dengan unit ID asli kamu dari AdMob dashboard (pastikan sesuai dengan platform)
 const productionUnitIds = {
   banner: 'ca-app-pub-xxxxxxxxxxxxxxxx/BBBBBBBBBB',
   interstitial: 'ca-app-pub-xxxxxxxxxxxxxxxx/IIIIIIIIII',
@@ -8,7 +7,6 @@ const productionUnitIds = {
   appOpen: 'ca-app-pub-xxxxxxxxxxxxxxxx/OOOOOOOOOO',
 };
 
-// Jika kamu masih dalam development, gunakan TestIds
 const isDev = __DEV__;
 
 const unitIds = {
@@ -35,6 +33,7 @@ class AdManager {
     });
 
     this.loaded = false;
+    this.onCloseCallback = null;
 
     this.interstitial.addAdEventListener(AdEventType.LOADED, () => {
       this.loaded = true;
@@ -43,17 +42,26 @@ class AdManager {
     this.interstitial.addAdEventListener(AdEventType.CLOSED, () => {
       this.loaded = false;
       this.interstitial.load(); // Siapkan iklan berikutnya
+
+      // Jalankan callback jika ada
+      if (this.onCloseCallback) {
+        this.onCloseCallback();
+        this.onCloseCallback = null; // Reset setelah dipanggil
+      }
     });
 
-    // Pertama kali load iklan
+    // Load pertama kali
     this.interstitial.load();
   }
 
-  showAd() {
+  showAd(callback) {
     if (this.loaded) {
+      this.onCloseCallback = callback;
       this.interstitial.show();
     } else {
       console.log('Interstitial ad not ready');
+      // Jalankan langsung jika iklan tidak siap
+      if (callback) callback();
     }
   }
 
