@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "date-fns-tz": "^3.2.0",
     "expo": "^52.0.44",
+    "lottie-react-native": "^7.2.2",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-chart-kit": "^6.12.0",

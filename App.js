@@ -7,6 +7,7 @@ import AddInvestmentScreen from './screens/AddInvestmentScreen';
 import InvestmentDetailScreen from './screens/InvestmentDetailScreen';
 import GoldPriceScreen from "./screens/GoldPriceScreen";
 import AboutScreen from "./screens/AboutScreen";
+import SplashScreen from "./screens/SplashScreen";
 import BackupRestoreScreen from "./screens/BackupRestoreScreen";
 import { GoldRateProvider } from "./context/GoldRateContext"; // Import provider
 
@@ -24,7 +25,16 @@ export default function App() {
               headerTitleStyle: { fontWeight: 'bold' },
             }}
           >
-            <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Pencatatan Emas' }} />
+           <Stack.Screen
+                name="Splash"
+                component={SplashScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ headerShown: false }}
+              />
             <Stack.Screen name="Graph" component={GraphScreen} options={{ title: 'Grafik Investasi' }} />
             <Stack.Screen name="AddInvestment" component={AddInvestmentScreen} />
             <Stack.Screen name="InvestmentDetail" component={InvestmentDetailScreen} />
