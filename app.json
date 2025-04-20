@@ -2,8 +2,8 @@
   "name": "GoldInvestmentApp",
   "displayName": "GoldInvestmentApp",
   "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-3940256099942544~3347511713",
-    "ios_app_id": "ca-app-pub-1525152987133318~5744862290"
+    "android_app_id": "ca-app-pub-8455060384823840~4892397275",
+    "ios_app_id": "ca-app-pub-8455060384823840~4892397275"
   },
   "expo": {
     "icon": "./assets/icon.png"
