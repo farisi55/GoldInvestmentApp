@@ -21,6 +21,7 @@ class AdManager {
   constructor() {
     this.interstitial = InterstitialAd.createForAdRequest(unitIds.interstitial, {
       requestNonPersonalizedAdsOnly: true,
+      // Keywords untuk menargetkan audiens yang relevan dengan aplikasi Catat Emas
       keywords: [
         'emas', 'investasi', 'keuangan', 'logam mulia', 'syariah',
         'tabungan', 'reksa dana', 'perencanaan keuangan',
@@ -31,16 +32,22 @@ class AdManager {
     this.onCloseCallback = null;
 
     this.interstitial.addAdEventListener(AdEventType.LOADED, () => {
+      console.log('Interstitial ad loaded');
       this.loaded = true;
     });
 
     this.interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+      console.log('Interstitial ad closed');
       this.loaded = false;
       this.interstitial.load(); // Siapkan iklan berikutnya
       if (this.onCloseCallback) {
         this.onCloseCallback();
         this.onCloseCallback = null;
       }
+    });
+
+    this.interstitial.addAdEventListener(AdEventType.ERROR, (error) => {
+      console.error('Interstitial Ad Error:', error);
     });
 
     this.interstitial.load();
@@ -51,8 +58,9 @@ class AdManager {
       this.onCloseCallback = callback;
       this.interstitial.show();
     } else {
-      console.log('Interstitial ad not ready');
-      if (callback) callback();
+      console.warn('Interstitial ad not ready. Reloading...');
+      this.interstitial.load();
+      if (callback) callback(); // Lanjutkan alur meski iklan tidak tampil
     }
   }
 

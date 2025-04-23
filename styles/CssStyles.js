@@ -159,6 +159,19 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     marginBottom: 16,
+    backgroundColor: '#F2E9C4', // warna kontras tapi tetap soft gold
+    borderWidth: 1,
+    borderColor: '#D4C29A',
+    borderRadius: 8,
+    color: '#4A3F1D', // teks gelap agar kontras
+    paddingHorizontal: 10,
+  },
+  pickerItem: {
+    backgroundColor: '#F2E9C4', // deep soft brown
+    color: '#4A3F1D', // teks gelap agar kontras
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center', // hanya bekerja di Android
   },
   chart: {
     marginVertical: 10,

@@ -46,10 +46,10 @@ const GraphScreen = () => {
         onValueChange={(itemValue) => setSelectedPeriod(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="1 Bulan" value="30" />
-        <Picker.Item label="3 Bulan" value="90" />
-        <Picker.Item label="6 Bulan" value="180" />
-        <Picker.Item label="1 Tahun" value="365" />
+        <Picker.Item label="1 Bulan" value="30" style={styles.pickerItem} />
+        <Picker.Item label="3 Bulan" value="90" style={styles.pickerItem} />
+        <Picker.Item label="6 Bulan" value="180" style={styles.pickerItem} />
+        <Picker.Item label="1 Tahun" value="365" style={styles.pickerItem} />
       </Picker>
       {chartData.length > 0 ? (
         <ChartComponent
