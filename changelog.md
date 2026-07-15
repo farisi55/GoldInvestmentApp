@@ -7,7 +7,7 @@
 ---
 project: Catat Emas (GoldInvestmentApp)
 knowledge_version: 1.0.2
-changelog_version: 1.0.3
+changelog_version: 1.0.4
 created: 2026-07-14
 status: in_progress
 milestone: 1 of 1
@@ -16,22 +16,6 @@ simple_mode: false
 ---
 
 ## [IN PROGRESS]
-
-### Task #004 — Env Var Validation at Startup
-- **Phase:** Phase 1 — Foundation
-- **Scope:** Tambahkan validasi startup untuk keempat `ADMOB_*_UNIT_ID`; fail fast dengan pesan jelas di build production bila hilang.
-- **Files to create / modify:** `App.js` atau `config/validateEnv.js` (baru)
-- **Acceptance criteria:**
-  - [ ] Build production melempar error jelas & human-readable saat start bila env var wajib tidak terdefinisi
-  - [ ] Build dev (`__DEV__`) tetap fallback ke AdMob Test ID tanpa error, tidak terpengaruh
-- **Dependencies:** Task #001
-- **Decisions made:** (fill after execution — never leave blank)
-
----
-
-## [NEXT TASKS]
-
-### Phase 2 — Domain & Data
 
 ### Task #005 — Formalize Migration Path for gold_investments Schema
 - **Phase:** Phase 2 — Domain & Data
@@ -49,6 +33,12 @@ simple_mode: false
   - [ ] Bukan live-traffic table (SQLite lokal single-device) — pola non-blocking tetap dipertahankan
 - **Dependencies:** Task #001
 - **Decisions made:** (fill after execution — never leave blank)
+
+---
+
+## [NEXT TASKS]
+
+### Phase 2 — Domain & Data
 
 ### Task #006 — Data Retention Policy for Soft-Deleted Records
 - **Phase:** Phase 2 — Domain & Data
@@ -239,6 +229,39 @@ simple_mode: false
 
 ## [COMPLETED]
 > Changelog v1.0.0 initialized from knowledge.md v1.0.2. Shape: mobile. Melanjutkan project existing (v1.0 live di Amazon Appstore) — tidak ada task inisialisasi dari nol.
+
+### Task #004 — Env Var Validation at Startup ✅
+- **Completed:** 2026-07-15
+- **Phase:** Phase 1 — Foundation
+- **Status:** OK
+- **Branch:** feat/task-004-env-var-validation-startup
+- **Files created / modified:**
+  - `config/validateEnv.js` — module baru; validasi keempat ADMOB_*_UNIT_ID; fail-fast di production, warn-only di dev; placeholder detection
+  - `App.js` — ditambahkan `validateEnv()` call setelah `initCrashReporter()`, sebelum navigator render
+  - `jest.config.js` — ditambahkan komentar dokumentasi pre-existing App.test.tsx gap
+  - `__tests__/validateEnv.test.js` — 9 unit tests baru (all passing)
+- **Acceptance criteria met:**
+  - [x] Build production melempar Error jelas & human-readable saat start bila env var wajib tidak terdefinisi atau berisi placeholder — dikonfirmasi via unit test `throws Error when all ADMOB vars are missing`
+  - [x] Build dev (`__DEV__` true) tetap warn-only tanpa throw — dikonfirmasi via unit test `does NOT throw when ADMOB vars are missing in dev mode`; AdMob Test IDs dipakai otomatis via admob.config.js
+- **Security gate:** BASIC — all checks passed
+  - [x] No secrets hardcoded — validateEnv.js baca dari `Config.*` (react-native-config) ✅
+  - [x] Error message mengandung hanya nama key dan placeholder values, tidak secret asli ✅
+  - [x] No eval()/exec() — ✅
+  - [x] CORS — N/A
+  - [x] .gitignore/pre-commit — carried from Task #001
+  - [x] CI/CD — Task #002; ADMOB vars tidak diperlukan di CI (dev mode) ✅
+  - [x] Dockerfile — N/A
+- **Scalability gate:** BASIC — all checks passed
+  - [x] No synchronous blocking — `validateEnv()` pure sync, no I/O, executes in microseconds ✅
+  - [x] Structured logger — carried/resolved from Task #003 ✅
+- **Regression:** Passed 9 new tests. 20 total new tests pass (Task #003 + #004). Pre-existing `App.test.tsx` failure (TurboModuleRegistry native modules in Jest) documented — pre-existing before Task #001, not caused by this task.
+- **Decisions made:**
+  - [PATTERN] `validateEnv()` called as a module-level statement (not inside useEffect) — ensures validation runs before any React component renders, including NavigationContainer and GoldRateProvider
+  - [SECURITY] Placeholder values (`ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY`) treated as "missing" — prevents silent deployment with .env.example values that look like valid IDs but aren't real
+  - [PATTERN] Dev/prod divergence: dev warns but doesn't throw because Test IDs are always available automatically — fail-fast in prod only where real IDs are required for revenue
+  - [TEST] `App.test.tsx` native module Jest failure documented as pre-existing gap; full fix deferred to Task #007 (test coverage task) which will address the Jest mock setup
+- **Notes:** none
+- **Knowledge drift:** none (validateEnv is config code, no new library added, no knowledge §2/§8 change needed beyond what Task #003 already captured)
 
 ### Task #003 — Crash Reporting & Structured Logging Init ✅
 - **Completed:** 2026-07-15

@@ -10,6 +10,8 @@
  *    ditambahkan sebelum initialize untuk policy compliance.
  * 4. [Task #003] CrashReporter diinisialisasi saat app pertama kali dimuat,
  *    sebelum komponen lain dirender. PII scrubbing aktif via beforeSend hook.
+ * 5. [Task #004] validateEnv() dipanggil setelah CrashReporter init — fail fast
+ *    di production bila ADMOB_*_UNIT_ID tidak terkonfigurasi.
  */
 
 import React, { useEffect } from 'react';
@@ -18,6 +20,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 
 import { initCrashReporter, captureMessage } from './utils/CrashReporter';
+import { validateEnv } from './config/validateEnv';
 import HomeScreen from './screens/HomeScreen';
 import GraphScreen from './screens/GraphScreen';
 import AddInvestmentScreen from './screens/AddInvestmentScreen';
@@ -31,6 +34,10 @@ import { GoldRateProvider } from './context/GoldRateContext';
 // Inisialisasi crash reporting sedini mungkin — sebelum navigator dirender.
 // Ini memastikan crash di komponen navigasi pun tertangkap.
 initCrashReporter();
+
+// Validasi env vars — throws di production bila ADMOB_*_UNIT_ID tidak diisi.
+// Di dev mode: hanya warn, Test IDs tetap dipakai secara otomatis.
+validateEnv();
 
 const Stack = createStackNavigator();
 
