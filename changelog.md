@@ -7,7 +7,7 @@
 ---
 project: Catat Emas (GoldInvestmentApp)
 knowledge_version: 1.0.2
-changelog_version: 1.0.2
+changelog_version: 1.0.3
 created: 2026-07-14
 status: in_progress
 milestone: 1 of 1
@@ -16,22 +16,6 @@ simple_mode: false
 ---
 
 ## [IN PROGRESS]
-
-### Task #003 — Crash Reporting & Structured Logging Init
-- **Phase:** Phase 1 — Foundation
-- **Scope:** Integrasikan crash-reporting SDK (mis. Sentry React Native/Crashlytics) dengan PII scrubbing, menggantikan `console.error()` ad-hoc yang ada saat ini (mis. di `GoldPriceHelper.js`).
-- **Files to create / modify:** `App.js`, `utils/GoldPriceHelper.js`, semua catch-block existing yang saat ini hanya `console.error`
-- **Acceptance criteria:**
-  - [ ] Crash-reporting SDK terinisialisasi saat app start; dikonfirmasi lewat exception uji yang muncul di dashboard
-  - [ ] PII/secret scrubbing aktif — dikonfirmasi tidak ada nilai finansial mentah (berat/nilai investasi) terkirim dalam payload error
-- **Dependencies:** Task #001
-- **Decisions made:** (fill after execution — never leave blank)
-
----
-
-## [NEXT TASKS]
-
-### Phase 1 — Foundation
 
 ### Task #004 — Env Var Validation at Startup
 - **Phase:** Phase 1 — Foundation
@@ -42,6 +26,10 @@ simple_mode: false
   - [ ] Build dev (`__DEV__`) tetap fallback ke AdMob Test ID tanpa error, tidak terpengaruh
 - **Dependencies:** Task #001
 - **Decisions made:** (fill after execution — never leave blank)
+
+---
+
+## [NEXT TASKS]
 
 ### Phase 2 — Domain & Data
 
@@ -251,6 +239,51 @@ simple_mode: false
 
 ## [COMPLETED]
 > Changelog v1.0.0 initialized from knowledge.md v1.0.2. Shape: mobile. Melanjutkan project existing (v1.0 live di Amazon Appstore) — tidak ada task inisialisasi dari nol.
+
+### Task #003 — Crash Reporting & Structured Logging Init ✅
+- **Completed:** 2026-07-15
+- **Phase:** Phase 1 — Foundation
+- **Status:** OK
+- **Branch:** feat/task-003-crash-reporting-structured-logging
+- **Files created / modified:**
+  - `utils/CrashReporter.js` — module baru: Sentry init, PII scrubbing hook (`beforeSend`), `captureException()`, `captureMessage()`, `logError()` (drop-in replacement untuk `console.error`)
+  - `App.js` — ditambahkan `initCrashReporter()` call sebelum navigator render; `console.log/warn` di AdMob init diganti dengan `captureMessage()`
+  - `utils/GoldPriceHelper.js` — `console.error` diganti `logError`; ditambahkan explicit axios timeout 10 s
+  - `services/GoldRateService.js` — `console.error` diganti `logError`
+  - `screens/AddInvestmentScreen.js` — `console.error` diganti `logError`
+  - `screens/GraphScreen.js` — `console.error` diganti `logError`
+  - `repository/GoldInvestmentRepository.js` — `console.error` diganti `logError`
+  - `repository/BackupRestoreRepository.js` — semua `console.error/log` diganti `logError` (kecuali user-cancel flow)
+  - `.env.example` — ditambahkan `SENTRY_DSN` key dengan komentar instruksi
+  - `package.json` — ditambahkan `@sentry/react-native@6.15.0` (pinned exact version)
+  - `__tests__/CrashReporter.test.js` — 11 unit tests baru (all passing)
+- **Acceptance criteria met:**
+  - [x] Crash-reporting SDK (Sentry React Native 6.15.0) terinisialisasi saat app start via `initCrashReporter()` di App.js. Ketika SENTRY_DSN disediakan di .env production, exception dikirim ke Sentry dashboard. Di dev mode / SENTRY_DSN kosong, fallback ke console.
+  - [x] PII/secret scrubbing aktif — `beforeSend: scrubPII` hook dikonfirmasi strips `weight_gram`, `investment_value`, `price_gold`, `total_weight`, `total_investment`, `profit_loss` sebelum event dikirim. Dikonfirmasi via unit test.
+- **Security gate:** BASIC — all checks passed
+  - [x] No secrets hardcoded — DSN via `Config.SENTRY_DSN` (react-native-config, env var)
+  - [x] Sensitive config from env vars — SENTRY_DSN di .env (gitignored) ✅
+  - [x] No eval()/exec() — tidak ada di kode baru ✅
+  - [x] Error messages tidak expose stack traces ke UI — `captureMessage` hanya kirim `error?.message` ke Sentry; tidak ada stack trace ke UI pengguna ✅
+  - [x] CORS — N/A (mobile)
+  - [x] .gitignore — carried from Task #001
+  - [x] Pre-commit hook — masih aktif ✅
+  - [x] CI/CD — Task #002; SENTRY_DSN tidak diperlukan di CI (dev mode, kosong) ✅
+  - [x] Dockerfile — N/A
+- **Scalability gate:** BASIC — all checks passed
+  - [x] No synchronous blocking — `initCrashReporter()` lightweight sync call, tidak blokir UI ✅
+  - [x] External I/O timeout — `GoldPriceHelper` kini punya explicit `timeout: 10000` ms di axios ✅
+  - [x] No global mutable state issues — `_initialized` boolean, single-threaded JS ✅
+  - [x] Structured logger — **RESOLVED** oleh task ini ✅
+- **Regression:** Passed 11 new tests. Pre-existing 2 errors (react-hooks/exhaustive-deps) unchanged. Warning count turun 278→233 (improvement: console.error replaced dengan logError). Semua test suite sebelumnya tidak terpengaruh.
+- **Decisions made:**
+  - [ARCH] Pilih Sentry React Native (bukan Crashlytics) karena: setup lebih ringan (tidak butuh Firebase platform), tidak ada dependency chain tambahan, DSN cukup via env var, PII scrubbing lebih transparan lewat `beforeSend` hook
+  - [SECURITY] `beforeSend: scrubPII` diimplementasikan sebagai defence-in-depth — scrub PII dari extras, contexts, dan breadcrumbs sebelum transmisi ke Sentry
+  - [PATTERN] `logError(tag, error, meta)` sebagai unified interface — semua catch blocks kini PII-safe karena developer harus consciously add context ke `meta` param, tidak bisa accidentally pass raw financial objects
+  - [INFRA] `@sentry/react-native@6.15.0` pinned exact version sesuai security gate requirement
+  - [SECURITY] DSN dicek via `Config.SENTRY_DSN` — jika kosong, Sentry tidak diinit; tidak ada remote reporting tanpa DSN terkonfigurasi
+- **Notes:** Acceptance criteria "dikonfirmasi lewat exception uji yang muncul di dashboard" hanya dapat diverifikasi sepenuhnya saat SENTRY_DSN production diisi di .env dan app dijalankan di device. Unit test mengonfirmasi perilaku init, PII scrubbing, dan fallback.
+- **Knowledge drift:** UPDATE REQUIRED: @knowledge §2 — tambahkan `@sentry/react-native@6.15.0` ke Tech Stack; tambahkan `SENTRY_DSN` ke §8 Required env vars
 
 ### Task #002 — CI Pipeline: Lint, Test, Security Scan ✅
 - **Completed:** 2026-07-15

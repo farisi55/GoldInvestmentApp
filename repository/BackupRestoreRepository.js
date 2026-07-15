@@ -1,10 +1,18 @@
-import SQLite from "react-native-sqlite-storage";
-import RNFS from "react-native-fs";
-import Share from "react-native-share";
-import DocumentPicker from "react-native-document-picker";
-import { Alert } from "react-native";
+/**
+ * repository/BackupRestoreRepository.js
+ * Handles JSON backup and restore for gold investment data.
+ *
+ * Updated by Task #003: replaced console.error with logError (CrashReporter).
+ */
 
-const db = SQLite.openDatabase({ name: "GoldInvestment.db", location: "default" });
+import SQLite from 'react-native-sqlite-storage';
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
+import DocumentPicker from 'react-native-document-picker';
+import { Alert } from 'react-native';
+import { logError } from '../utils/CrashReporter';
+
+const db = SQLite.openDatabase({ name: 'GoldInvestment.db', location: 'default' });
 
 // Fungsi untuk Backup Database ke File JSON
 export const handleBackup = async () => {
@@ -23,29 +31,29 @@ export const handleBackup = async () => {
           const currentDate = new Date();
           const formattedDate = `${currentDate.getFullYear()}${(currentDate.getMonth() + 1)
             .toString()
-            .padStart(2, "0")}${currentDate.getDate().toString().padStart(2, "0")}`;
+            .padStart(2, '0')}${currentDate.getDate().toString().padStart(2, '0')}`;
 
           const filePath = `${RNFS.DownloadDirectoryPath}/gold_invest_bck${formattedDate}.json`;
-          await RNFS.writeFile(filePath, jsonData, "utf8");
+          await RNFS.writeFile(filePath, jsonData, 'utf8');
 
           Alert.alert(
-            "Backup Sukses",
+            'Backup Sukses',
             `File backup berhasil disimpan di ${filePath}. Apakah Anda ingin mengirim file ini via email?`,
             [
-              { text: "Tidak", style: "cancel" },
-              { text: "Ya", onPress: () => handleShareFile(filePath) },
-            ]
+              { text: 'Tidak', style: 'cancel' },
+              { text: 'Ya', onPress: () => handleShareFile(filePath) },
+            ],
           );
         },
         (error) => {
-          console.error("Error membaca data dari database:", error.message);
-          Alert.alert("Error", "Gagal membaca data dari database.");
-        }
+          logError('BackupRestoreRepository.handleBackup.read', error);
+          Alert.alert('Error', 'Gagal membaca data dari database.');
+        },
       );
     });
   } catch (error) {
-    console.error("Error saat backup:", error.message);
-    Alert.alert("Error", "Gagal melakukan backup.");
+    logError('BackupRestoreRepository.handleBackup', error);
+    Alert.alert('Error', 'Gagal melakukan backup.');
   }
 };
 
@@ -53,14 +61,14 @@ export const handleBackup = async () => {
 const handleShareFile = async (filePath) => {
   try {
     const options = {
-      title: "Kirim Backup",
-      message: "Ini adalah file backup database Anda.",
+      title: 'Kirim Backup',
+      message: 'Ini adalah file backup database Anda.',
       url: `file://${filePath}`,
-      type: "application/json",
+      type: 'application/json',
     };
     await Share.open(options);
   } catch (error) {
-    console.error("Error saat share file:", error.message);
+    logError('BackupRestoreRepository.handleShareFile', error);
   }
 };
 
@@ -71,12 +79,12 @@ export const handleRestore = async () => {
       type: [DocumentPicker.types.allFiles],
     });
 
-    const jsonData = await RNFS.readFile(file.uri, "utf8");
+    const jsonData = await RNFS.readFile(file.uri, 'utf8');
     const data = JSON.parse(jsonData);
 
     db.transaction((tx) => {
-      tx.executeSql("DELETE FROM gold_investments;", [], () => {
-        console.log("Database berhasil dikosongkan.");
+      tx.executeSql('DELETE FROM gold_investments;', [], () => {
+        // Database cleared successfully — informational only.
       });
 
       data.forEach((item) => {
@@ -89,18 +97,18 @@ export const handleRestore = async () => {
             item.price_gold,
             item.investment_value,
             item.use_data,
-          ]
+          ],
         );
       });
 
-      Alert.alert("Restore Sukses", "Data berhasil di-restore dari file backup.");
+      Alert.alert('Restore Sukses', 'Data berhasil di-restore dari file backup.');
     });
   } catch (error) {
     if (DocumentPicker.isCancel(error)) {
-      console.log("User membatalkan pilihan file.");
+      // User dismissed picker — not an error.
     } else {
-      console.error("Error saat restore:", error.message);
-      Alert.alert("Error", "Gagal melakukan restore.");
+      logError('BackupRestoreRepository.handleRestore', error);
+      Alert.alert('Error', 'Gagal melakukan restore.');
     }
   }
 };

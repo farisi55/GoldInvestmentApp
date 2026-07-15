@@ -8,6 +8,8 @@
  *    sehingga AdMob SDK siap sebelum iklan pertama diminta.
  * 3. Request configuration (tag for child-directed treatment & under-age consent)
  *    ditambahkan sebelum initialize untuk policy compliance.
+ * 4. [Task #003] CrashReporter diinisialisasi saat app pertama kali dimuat,
+ *    sebelum komponen lain dirender. PII scrubbing aktif via beforeSend hook.
  */
 
 import React, { useEffect } from 'react';
@@ -15,6 +17,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 
+import { initCrashReporter, captureMessage } from './utils/CrashReporter';
 import HomeScreen from './screens/HomeScreen';
 import GraphScreen from './screens/GraphScreen';
 import AddInvestmentScreen from './screens/AddInvestmentScreen';
@@ -24,6 +27,10 @@ import AboutScreen from './screens/AboutScreen';
 import SplashScreen from './screens/SplashScreen';
 import BackupRestoreScreen from './screens/BackupRestoreScreen';
 import { GoldRateProvider } from './context/GoldRateContext';
+
+// Inisialisasi crash reporting sedini mungkin — sebelum navigator dirender.
+// Ini memastikan crash di komponen navigasi pun tertangkap.
+initCrashReporter();
 
 const Stack = createStackNavigator();
 
@@ -41,11 +48,11 @@ export default function App() {
       .then(() => mobileAds().initialize())
       .then(adapterStatuses => {
         // SDK siap — AdManager boleh mulai load iklan setelah ini.
-        console.log('AdMob initialized', adapterStatuses);
+        captureMessage('AdMob initialized', 'info', { adapterCount: adapterStatuses?.length });
       })
       .catch(err => {
-        // Gagal init tidak boleh crash app; cukup log.
-        console.warn('AdMob initialization failed:', err);
+        // Gagal init tidak boleh crash app; log via CrashReporter.
+        captureMessage('AdMob initialization failed', 'warning', { error: err?.message });
       });
   }, []);
 
