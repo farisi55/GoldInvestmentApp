@@ -6,6 +6,7 @@ import { GoldRateContext } from '../context/GoldRateContext';
 import styles from '../styles/CssStyles';
 import AdManager from '../utils/AdManager'; // Import AdManager
 import BannerAdComponent from "../components/BannerAdComponent";
+import { logError } from '../utils/CrashReporter';
 
 const AddInvestmentScreen = ({ navigation }) => {
   const [inputDate, setInputDate] = useState(new Date());
@@ -56,7 +57,7 @@ const AddInvestmentScreen = ({ navigation }) => {
         navigation.navigate('Home');
       }
     } catch (error) {
-      console.error('Gagal menambahkan investasi:', error);
+      logError('AddInvestmentScreen', error);
       Alert.alert('Error', 'Gagal menambahkan investasi.');
     }
   };

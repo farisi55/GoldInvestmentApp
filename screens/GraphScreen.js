@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import ChartComponent from '../components/ChartComponent';
 import { fetchGraphData } from '../repository/GoldInvestmentRepository';
 import styles from '../styles/CssStyles';
+import { logError } from '../utils/CrashReporter';
 
 
 const GraphScreen = () => {
@@ -21,7 +22,7 @@ const GraphScreen = () => {
       const data = await fetchGraphData(days);
       setChartData(data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      logError('GraphScreen', error);
     }
   };
 

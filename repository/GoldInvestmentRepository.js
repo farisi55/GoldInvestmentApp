@@ -1,4 +1,5 @@
 import SQLite from "react-native-sqlite-storage";
+import { logError } from '../utils/CrashReporter';
 
 const db = SQLite.openDatabase({ name: "GoldInvestment.db", location: "default" });
 
@@ -37,7 +38,7 @@ export function getTotalInvestmentData() {
           });
         },
         (_, error) => {
-          console.error("Error fetching investment data", error);
+          logError('GoldInvestmentRepository.getTotalInvestmentData', error);
           reject(error);
         }
       );
