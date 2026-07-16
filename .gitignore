@@ -75,3 +75,11 @@ yarn-error.log
 
 # dotenv file
 .env
+.env.local
+.env.production
+.env.staging
+
+# Private keys and certificates (Task #001 — security baseline)
+*.pem
+*.key
+*.p12
