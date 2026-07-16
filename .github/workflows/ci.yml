@@ -1,0 +1,66 @@
+# CI Pipeline — Catat Emas (GoldInvestmentApp)
+# Runs on every push and pull request.
+# Steps: lint → test → dependency security audit
+# Installed by: Task #002 — CI Pipeline: Lint, Test, Security Scan
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  lint-test-audit:
+    name: Lint · Test · Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node.js setup ─────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # ── Install dependencies ───────────────────────────────────────────────
+      # Uses clean-install (ci) so the lockfile is never silently updated.
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Lint ──────────────────────────────────────────────────────────────
+      # Fail build if ESLint reports any error (exit code ≠ 0).
+      # Warnings are surfaced but do not block the build.
+      - name: Lint (ESLint)
+        run: npm run lint -- --max-warnings=9999
+        # --max-warnings=9999 lets warnings pass; only errors (exit 1) fail.
+        # The baseline codebase has pre-existing warnings — these are tracked
+        # separately and will be addressed progressively.
+
+      # ── Unit tests ────────────────────────────────────────────────────────
+      - name: Run tests (Jest)
+        run: npm test -- --watchAll=false --forceExit
+        env:
+          # Prevent AdMob / native modules from trying to initialise in Jest.
+          # __DEV__ is already true in the Jest environment (react-native preset).
+          CI: "true"
+
+      # ── Dependency security audit ─────────────────────────────────────────
+      # Fails on CRITICAL vulnerabilities immediately.
+      # HIGH vulnerabilities are reported but do not fail the build yet —
+      # they are tracked as a known backlog item (see changelog Task #002 note).
+      # Task #017 will re-evaluate the threshold after deps are updated.
+      - name: Security audit (npm audit)
+        run: npm audit --audit-level=critical
+        continue-on-error: false
+
+      # Surface HIGH vulnerabilities as warnings (non-blocking)
+      - name: Security audit — HIGH vulnerabilities (informational)
+        run: npm audit --audit-level=high || true
+        # '|| true' ensures this step never fails the build.
+        # Treat output as a visible signal for the developer to address.
