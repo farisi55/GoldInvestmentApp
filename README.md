@@ -42,10 +42,12 @@ Dibuat dengan **React Native**, aplikasi ini memudahkan pengguna untuk mencatat 
 2. Install dependencies:
    ```bash
    npm install
-3. Jalankan Metro bundler:
+3. Jalankan Metro bundler (jangan di close):
    ```bash
    npm start
-4. Jalankan di Android:
+   atau
+   npx react-native start --reset-cache
+4. Jalankan di Android (buka terminal baru):
     ```bash
    npx react-native run-android
 

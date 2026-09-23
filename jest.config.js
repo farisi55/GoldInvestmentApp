@@ -10,4 +10,8 @@
 
 module.exports = {
   preset: 'react-native',
+  setupFiles: ['./jest.setup.js'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-config|@react-native-community|react-native-gesture-handler|react-native-screens|react-native-reanimated|react-native-safe-area-context|react-native-svg|react-native-share|react-native-fs|react-native-document-picker|react-native-get-random-values|date-fns-tz|lottie-react-native|react-native-linear-gradient|react-native-chart-kit|@sentry|@react-native-community/datetimepicker|@react-native-picker|react-native-vector-icons)/)',
+  ],
 };
